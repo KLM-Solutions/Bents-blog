@@ -13,7 +13,7 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Set up YouTube API client
 YOUTUBE_API_KEY = st.secrets["YOUTUBE_API_KEY"]  # Add your YouTube API key in .streamlit/secrets.toml
-youtube = build('youtube', 'v3', developerApiKey=YOUTUBE_API_KEY)
+youtube = build('youtube', 'v3', key=YOUTUBE_API_KEY) 
 
 def extract_video_id(url):
     """Extract YouTube video ID from URL"""
