@@ -1,6 +1,6 @@
 import streamlit as st
 from openai import OpenAI
-from youtube_transcript_api import YouTubeTranscriptApi
+
 from googleapiclient.discovery import build
 import re
 from dotenv import load_dotenv
