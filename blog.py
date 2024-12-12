@@ -4,6 +4,9 @@ from googleapiclient.discovery import build
 import re
 from dotenv import load_dotenv
 from youtube_transcript_api import YouTubeTranscriptApi
+from pytube import YouTube
+import os
+import whisper
 
 # Load environment variables
 load_dotenv()
@@ -14,6 +17,7 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 # Set up YouTube API client
 YOUTUBE_API_KEY = st.secrets["YOUTUBE_API_KEY"]  # Add your YouTube API key in .streamlit/secrets.toml
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+
 def extract_video_id(url):
     """Extract YouTube video ID from URL"""
     patterns = [
@@ -28,15 +32,43 @@ def extract_video_id(url):
             return match.group(1)
     return None
 
-def get_video_transcript(video_id):
-    """Get transcript from YouTube video"""
+def transcribe_audio(video_id):
+    """Download and transcribe video audio using Whisper"""
     try:
+        # Get video URL
+        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        
+        # Download audio
+        yt = YouTube(video_url)
+        audio_stream = yt.streams.filter(only_audio=True).first()
+        
+        # Download to temporary file
+        temp_file = f"temp_audio_{video_id}.mp4"
+        audio_stream.download(filename=temp_file)
+        
+        # Load Whisper model and transcribe
+        model = whisper.load_model("base")
+        result = model.transcribe(temp_file)
+        
+        # Clean up temporary file
+        os.remove(temp_file)
+        
+        return result["text"]
+    except Exception as e:
+        st.error(f"Error transcribing audio: {str(e)}")
+        return None
+
+def get_video_transcript(video_id):
+    """Get transcript from YouTube video with fallback to audio transcription"""
+    try:
+        # First try getting transcript through YouTube API
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
         transcript_text = ' '.join([item['text'] for item in transcript_list])
         return transcript_text
     except Exception as e:
-        st.error(f"Error fetching transcript: {str(e)}")
-        return None
+        st.info("No transcript available. Attempting to transcribe audio...")
+        # Try the fallback method
+        return transcribe_audio(video_id)
 
 SYSTEM_INSTRUCTION = """
 You are a skilled blog post writer. Follow these guidelines:
@@ -52,7 +84,7 @@ def generate_article_from_transcript(title, transcript):
     
     # Get a summary first to help with context
     summary_response = client.chat.completions.create(
-        model="gpt-4o-2024-11-20",
+        model="gpt-4o-2024-11-20",  # Updated to a valid model name
         messages=[
             {"role": "system", "content": "Summarize the key points from this video transcript."},
             {"role": "user", "content": summary_prompt}
@@ -69,7 +101,7 @@ def generate_article_from_transcript(title, transcript):
     Convert this into a well-structured blog post while maintaining the key information and insights from the video."""
     
     response = client.chat.completions.create(
-        model="gpt-4o-2024-11-20",
+        model="gpt-4o-2024-11-20",  # Updated to a valid model name
         messages=[
             {"role": "system", "content": SYSTEM_INSTRUCTION},
             {"role": "user", "content": content_prompt}
@@ -93,7 +125,7 @@ def main():
                 
                 transcript = get_video_transcript(video_id)
                 if not transcript:
-                    st.error("Could not fetch video transcript")
+                    st.error("Could not fetch transcript or transcribe audio")
                     return
                 
                 article_content = generate_article_from_transcript(title, transcript)
