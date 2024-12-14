@@ -297,9 +297,7 @@ def main():
     4. Click "Generate Article" and wait for processing
     5. Download the generated article in Markdown format
     
-    Note: Processing time may vary depending on video length and transcript availability.
-    """)
-
-
-if __name__ == "__main__":
+    Note: Processing time may vary depending on video length and transcript availability.""")
+    
+    if __name__ == "__main__":
     main()
