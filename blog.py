@@ -202,7 +202,7 @@ def generate_article_from_transcript(title, transcript, video_details=None, styl
     
     Full transcript: {transcript}
     
-    Convert this into a well-structured blog post while maintaining the speaker's voice and key insights.
+    Convert this into a well-structured blog post while maintaining the speakers voice and key insights.
     Make it {'comprehensive and detailed' if style == 'detailed' else 'concise and focused'}.
     Use proper markdown formatting to create an engaging article."""
     
