@@ -146,6 +146,10 @@ You are a skilled blog post writer. Follow these guidelines:
 6. Use markdown formatting for headers (##) and emphasis (*).
 7. Include a brief introduction and conclusion.
 8. Break down complex topics into digestible sections.
+9. Write the content as if the speaker is writing directly to the reader.
+10. Convert the spoken transcript into a well-structured written format while maintaining the speaker's voice.
+11. Use "I", "my", and "we" exactly as the speaker would, representing their direct thoughts and experiences.
+12.  End with the speaker's concluding thoughts or call to action.
 """
 
 def generate_article_from_transcript(title, transcript, video_details=None):
