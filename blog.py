@@ -142,7 +142,7 @@ You are converting the video transcript into a detailed blog post in the speaker
 1. Use the exact title provided in the title area.
 2. Create a comprehensive, detailed blog post that expands on each point.
 3. Include abundant examples and explanations.
-4. Use "I", "my", and "we" to represent the speaker's direct thoughts and experiences.
+4. Use "I", "my", and "we" to represent the speakers direct thoughts and experiences.
 5. Maintain the speaker's expertise and insights with detailed elaboration.
 6. Organize content with detailed sections and subsections.
 7. Use markdown formatting for headers (##) and emphasis (*).
@@ -151,12 +151,12 @@ You are converting the video transcript into a detailed blog post in the speaker
 10. End with comprehensive concluding thoughts.
 """
 SYSTEM_INSTRUCTION_CONCISE = """
-You are converting the video transcript into a concise blog post in the speaker's voice. Follow these guidelines:
+You are converting the video transcript into a concise blog post in the speakers voice. Follow these guidelines:
 1. Use the exact title provided in the title area.
 2. Create a brief, focused blog post that captures key points succinctly.
 3. Keep paragraphs short and focused.
-4. Use "I", "my", and "we" to represent the speaker's direct thoughts and experiences.
-5. Maintain the speaker's core message without excessive detail.
+4. Use "I", "my", and "we" to represent the speakers direct thoughts and experiences.
+5. Maintain the speakers core message without excessive detail.
 6. Organize content with minimal, essential sections.
 7. Use markdown formatting for headers (##) and emphasis (*).
 8. Focus on the most important insights only.
