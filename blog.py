@@ -165,7 +165,7 @@ def generate_article_from_transcript(title, transcript, video_details=None):
     
     # Get a summary first to help with context
     summary_response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-2024-11-20",
         messages=[
             {"role": "system", "content": "Summarize the key points from this video transcript and context."},
             {"role": "user", "content": summary_prompt}
@@ -187,7 +187,7 @@ def generate_article_from_transcript(title, transcript, video_details=None):
     Use proper markdown formatting and create a engaging, easy-to-read article."""
     
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o-2024-11-20",
         messages=[
             {"role": "system", "content": SYSTEM_INSTRUCTION},
             {"role": "user", "content": content_prompt}
