@@ -137,23 +137,38 @@ def get_video_details(video_id):
         return None
 
 SYSTEM_INSTRUCTION = """
-You are a skilled blog post writer. Follow these guidelines:
+SYSTEM_INSTRUCTION_DETAILED = """
+You are converting the video transcript into a detailed blog post in the speaker's voice. Follow these guidelines:
 1. Use the exact title provided in the title area.
-2. Convert the provided YouTube video transcript into a well-structured blog post.
-3. Organize the content logically with appropriate headings and paragraphs.
-4. Remove filler words and repetitive content common in spoken language.
-5. Maintain the key points and important information from the video.
-6. Use markdown formatting for headers (##) and emphasis (*).
-7. Include a brief introduction and conclusion.
-8. Break down complex topics into digestible sections.
-9. Write the content as if the speaker is writing directly to the reader.
-10. Convert the spoken transcript into a well-structured written format while maintaining the speaker's voice.
-11. Use "I", "my", and "we" exactly as the speaker would, representing their direct thoughts and experiences.
-12.  End with the speaker's concluding thoughts or call to action.
+2. Create a comprehensive, detailed blog post that expands on each point.
+3. Include abundant examples and explanations.
+4. Use "I", "my", and "we" to represent the speaker's direct thoughts and experiences.
+5. Maintain the speaker's expertise and insights with detailed elaboration.
+6. Organize content with detailed sections and subsections.
+7. Use markdown formatting for headers (##) and emphasis (*).
+8. Provide in-depth context for each major point.
+9. Include relevant examples and case studies mentioned.
+10. End with comprehensive concluding thoughts.
+"""
+SYSTEM_INSTRUCTION_CONCISE = """
+You are converting the video transcript into a concise blog post in the speaker's voice. Follow these guidelines:
+1. Use the exact title provided in the title area.
+2. Create a brief, focused blog post that captures key points succinctly.
+3. Keep paragraphs short and focused.
+4. Use "I", "my", and "we" to represent the speaker's direct thoughts and experiences.
+5. Maintain the speaker's core message without excessive detail.
+6. Organize content with minimal, essential sections.
+7. Use markdown formatting for headers (##) and emphasis (*).
+8. Focus on the most important insights only.
+9. Include only the most impactful examples.
+10. End with brief, actionable takeaways.
 """
 
-def generate_article_from_transcript(title, transcript, video_details=None):
-    """Generate a blog post from the transcript and video details"""
+def generate_article_from_transcript(title, transcript, video_details=None, style="detailed"):
+    """Generate a blog post with specified style from the transcript and video details"""
+    
+    # Select appropriate system instruction based on style
+    system_instruction = SYSTEM_INSTRUCTION_DETAILED if style == "detailed" else SYSTEM_INSTRUCTION_CONCISE
     
     # Create a context-rich prompt using video details if available
     context = ""
@@ -174,12 +189,12 @@ def generate_article_from_transcript(title, transcript, video_details=None):
             {"role": "system", "content": "Summarize the key points from this video transcript and context."},
             {"role": "user", "content": summary_prompt}
         ],
-        temperature=0.7
+        temperature=0.1
     )
     summary = summary_response.choices[0].message.content
     
     # Now generate the full article
-    content_prompt = f"""Write a detailed blog post with the title: '{title}'
+    content_prompt = f"""Write a {'detailed' if style == 'detailed' else 'concise'} blog post with the title: '{title}'
     
     Context: {context}
     
@@ -187,16 +202,17 @@ def generate_article_from_transcript(title, transcript, video_details=None):
     
     Full transcript: {transcript}
     
-    Convert this into a well-structured blog post while maintaining the key information and insights from the video.
-    Use proper markdown formatting and create a engaging, easy-to-read article."""
+    Convert this into a well-structured blog post while maintaining the speaker's voice and key insights.
+    Make it {'comprehensive and detailed' if style == 'detailed' else 'concise and focused'}.
+    Use proper markdown formatting to create an engaging article."""
     
     response = client.chat.completions.create(
         model="gpt-4o-2024-11-20",
         messages=[
-            {"role": "system", "content": SYSTEM_INSTRUCTION},
+            {"role": "system", "content": system_instruction},
             {"role": "user", "content": content_prompt}
         ],
-        temperature=0.7
+        temperature=0.1
     )
     return response.choices[0].message.content
 
@@ -206,17 +222,25 @@ def main():
     st.title("📝 YouTube Video to Blog Post Generator")
     st.markdown("""
     Transform any YouTube video into a well-structured blog post. 
-    Simply enter the video URL and desired blog title below.
+    Choose between detailed and concise writing styles.
     """)
     
-    # Create two columns for input
-    col1, col2 = st.columns(2)
+    # Create three columns for input
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         video_url = st.text_input("YouTube Video URL:", placeholder="https://www.youtube.com/watch?v=...")
     
     with col2:
         title = st.text_input("Blog Post Title:", placeholder="Enter your desired blog post title...")
+    
+    with col3:
+        style = st.selectbox(
+            "Writing Style:",
+            options=["detailed", "concise"],
+            format_func=lambda x: "Detailed (Comprehensive)" if x == "detailed" else "Concise (To the point)",
+            help="Choose between a detailed or concise writing style"
+        )
     
     if st.button("Generate Article", type="primary"):
         if video_url and title:
@@ -235,22 +259,27 @@ def main():
                 if not transcript:
                     return
                 
-                # Generate article
-                article_content = generate_article_from_transcript(title, transcript, video_details)
+                # Generate article with selected style
+                article_content = generate_article_from_transcript(
+                    title, 
+                    transcript, 
+                    video_details,
+                    style
+                )
             
             # Display results
             st.success("✅ Article generated successfully!")
             
             # Show the article in a nice format
             st.markdown("---")
-            st.markdown("## Generated Article")
+            st.markdown(f"## Generated Article ({style.capitalize()} Version)")
             st.markdown(article_content)
             
             # Add download button
             st.download_button(
                 label="Download Article as Markdown",
                 data=article_content,
-                file_name="generated_article.md",
+                file_name=f"generated_article_{style}.md",
                 mime="text/markdown"
             )
         else:
@@ -262,11 +291,15 @@ def main():
     ### How to use:
     1. Paste a YouTube video URL in the input field
     2. Enter your desired blog post title
-    3. Click "Generate Article" and wait for processing
-    4. Download the generated article in Markdown format
+    3. Select your preferred writing style:
+        - **Detailed**: Comprehensive coverage with examples and elaboration
+        - **Concise**: Brief, focused version with key points only
+    4. Click "Generate Article" and wait for processing
+    5. Download the generated article in Markdown format
     
     Note: Processing time may vary depending on video length and transcript availability.
     """)
+
 
 if __name__ == "__main__":
     main()
