@@ -135,32 +135,38 @@ def get_video_details(video_id):
     except Exception as e:
         st.error(f"Error fetching video details: {str(e)}")
         return None
-SYSTEM_INSTRUCTION = """
+
+# Define system instructions for different styles
 SYSTEM_INSTRUCTION_DETAILED = """
-You are converting the video transcript into a detailed blog post in the speakers voice. Follow these guidelines:
+You are converting the video transcript into a detailed blog post in the speaker's voice. Follow these guidelines:
 1. Use the exact title provided in the title area.
 2. Create a comprehensive, detailed blog post that expands on each point.
 3. Include abundant examples and explanations.
-4. Use "I", "my", and "we" to represent the speakers direct thoughts and experiences.
-5. Maintain the speakers expertise and insights with detailed elaboration.
+4. Use "I", "my", and "we" to represent the speaker's direct thoughts and experiences.
+5. Maintain the speaker's expertise and insights with detailed elaboration.
 6. Organize content with detailed sections and subsections.
 7. Use markdown formatting for headers (##) and emphasis (*).
 8. Provide in-depth context for each major point.
 9. Include relevant examples and case studies mentioned.
 10. End with comprehensive concluding thoughts.
+11. Keep the speaker's authentic voice throughout.
+12. Elaborate on technical concepts when present.
 """
+
 SYSTEM_INSTRUCTION_CONCISE = """
-You are converting the video transcript into a concise blog post in the speakers voice. Follow these guidelines:
+You are converting the video transcript into a concise blog post in the speaker's voice. Follow these guidelines:
 1. Use the exact title provided in the title area.
 2. Create a brief, focused blog post that captures key points succinctly.
 3. Keep paragraphs short and focused.
-4. Use "I", "my", and "we" to represent the speakers direct thoughts and experiences.
-5. Maintain the speakers core message without excessive detail.
+4. Use "I", "my", and "we" to represent the speaker's direct thoughts and experiences.
+5. Maintain the speaker's core message without excessive detail.
 6. Organize content with minimal, essential sections.
 7. Use markdown formatting for headers (##) and emphasis (*).
 8. Focus on the most important insights only.
 9. Include only the most impactful examples.
 10. End with brief, actionable takeaways.
+11. Keep the speaker's authentic voice throughout.
+12. Simplify technical concepts while maintaining accuracy.
 """
 
 def generate_article_from_transcript(title, transcript, video_details=None, style="detailed"):
@@ -188,7 +194,7 @@ def generate_article_from_transcript(title, transcript, video_details=None, styl
             {"role": "system", "content": "Summarize the key points from this video transcript and context."},
             {"role": "user", "content": summary_prompt}
         ],
-        temperature=0.1
+        temperature=0.7
     )
     summary = summary_response.choices[0].message.content
     
@@ -201,9 +207,9 @@ def generate_article_from_transcript(title, transcript, video_details=None, styl
     
     Full transcript: {transcript}
     
-    Convert this into a well-structured blog post while maintaining the speakers voice and key insights.
+    Convert this into a well-structured blog post while maintaining the speaker's voice and key insights.
     Make it {'comprehensive and detailed' if style == 'detailed' else 'concise and focused'}.
-    Use proper markdown formatting to create an engaging article."""
+    Use proper markdown formatting and create an engaging article."""
     
     response = client.chat.completions.create(
         model="gpt-4o-2024-11-20",
@@ -211,7 +217,7 @@ def generate_article_from_transcript(title, transcript, video_details=None, styl
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": content_prompt}
         ],
-        temperature=0.1
+        temperature=0.7
     )
     return response.choices[0].message.content
 
@@ -286,7 +292,7 @@ def main():
     
     # Add footer with usage instructions
     st.markdown("---")
-    st.markdown(""")
+    st.markdown("""
     ### How to use:
     1. Paste a YouTube video URL in the input field
     2. Enter your desired blog post title
@@ -297,6 +303,7 @@ def main():
     5. Download the generated article in Markdown format
     
     Note: Processing time may vary depending on video length and transcript availability.
-    
-    if __name__ == "__main__":
+    """)
+
+if __name__ == "__main__":
     main()
