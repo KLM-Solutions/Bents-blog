@@ -138,7 +138,7 @@ def get_video_details(video_id):
 
 SYSTEM_INSTRUCTION = """
 SYSTEM_INSTRUCTION_DETAILED = """
-You are converting the video transcript into a detailed blog post in the speaker's voice. Follow these guidelines:
+You are converting the video transcript into a detailed blog post in the speakers voice. Follow these guidelines:
 1. Use the exact title provided in the title area.
 2. Create a comprehensive, detailed blog post that expands on each point.
 3. Include abundant examples and explanations.
