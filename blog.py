@@ -287,7 +287,7 @@ def main():
     
     # Add footer with usage instructions
     st.markdown("---")
-    st.markdown("""
+    st.markdown(""")
     ### How to use:
     1. Paste a YouTube video URL in the input field
     2. Enter your desired blog post title
@@ -297,7 +297,7 @@ def main():
     4. Click "Generate Article" and wait for processing
     5. Download the generated article in Markdown format
     
-    Note: Processing time may vary depending on video length and transcript availability.""")
+    Note: Processing time may vary depending on video length and transcript availability.
     
     if __name__ == "__main__":
     main()
