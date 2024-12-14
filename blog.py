@@ -143,7 +143,7 @@ You are converting the video transcript into a detailed blog post in the speaker
 2. Create a comprehensive, detailed blog post that expands on each point.
 3. Include abundant examples and explanations.
 4. Use "I", "my", and "we" to represent the speakers direct thoughts and experiences.
-5. Maintain the speaker's expertise and insights with detailed elaboration.
+5. Maintain the speakers expertise and insights with detailed elaboration.
 6. Organize content with detailed sections and subsections.
 7. Use markdown formatting for headers (##) and emphasis (*).
 8. Provide in-depth context for each major point.
