@@ -135,7 +135,6 @@ def get_video_details(video_id):
     except Exception as e:
         st.error(f"Error fetching video details: {str(e)}")
         return None
-
 SYSTEM_INSTRUCTION = """
 SYSTEM_INSTRUCTION_DETAILED = """
 You are converting the video transcript into a detailed blog post in the speakers voice. Follow these guidelines:
